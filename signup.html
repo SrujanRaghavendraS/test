@@ -5,10 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KiddyPi - Sign Up</title>
     <link rel="stylesheet" href="demo.css">
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
 </head>
 <body>
     <!-- Navbar -->
@@ -18,14 +14,14 @@
                 <img src="Images/kiddypi.png" alt="KiddyPi Logo">
                 <span>KiddyPi</span>
             </div>
-            <a href="login.html" class="demo-button">Login</a> <!-- Link back to login page -->
+            <a href="login.html" class="demo-button">Login</a> 
         </div>
     </nav>
 
     <!-- Signup Form Section -->
     <div class="content">
         <div id="signup">
-            <form>
+            <form id="signupForm" onsubmit="return false;"> <!-- Prevent default form submission -->
                 <div class="group">
                     <input id="firstName" type="text" placeholder="First Name" required>
                 </div>
@@ -45,80 +41,92 @@
                     <textarea id="address" rows="4" placeholder="Address" required></textarea>
                 </div>
                 <div class="group">
+                    <input id="email" type="email" placeholder="Email" required>
+                </div>
+                <div class="group">
+                    <input id="parentname" type="text" placeholder="Parent Name" required>
+                </div>
+                <div class="group">
                     <input id="newPassword" type="password" placeholder="New Password" required>
                 </div>
                 <div class="group">
                     <input id="reenterPassword" type="password" placeholder="Re-enter Password" required>
                 </div>
-                <button id="btnSignup" type="button" class="button buttonBlue">Sign up</button>
+                
+                <button id="btnSignup" type="button" class="button buttonBlue" onclick="signUp()">Sign up</button>
             </form>
         </div>
     </div>
 
     <script>
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyDEmRAEN_HjN00T0gpKig0GMPJYZ0N9XEE",
-            authDomain: "smart-ai-71057.firebaseapp.com",
-            projectId: "smart-ai-71057",
-            storageBucket: "smart-ai-71057.appspot.com",
-            messagingSenderId: "560586463239",
-            appId: "1:560586463239:web:dc391be67c45f555ddf2a2",
-            measurementId: "G-6BGDTYE1WJ"
-        };
-
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-
-        // Signup functionality
-        document.getElementById('btnSignup').addEventListener('click', function() {
+        // SignUp function to send data to FastAPI
+        async function signUp() {
+            // Collecting form values
             const firstName = document.getElementById('firstName').value;
             const lastName = document.getElementById('lastName').value;
             const phoneNumber = document.getElementById('phoneNumber').value;
             const dob = document.getElementById('dob').value;
             const age = document.getElementById('age').value;
             const address = document.getElementById('address').value;
+            const email = document.getElementById('email').value;
+            const parentname = document.getElementById('parentname').value;
             const password = document.getElementById('newPassword').value;
             const reenterPassword = document.getElementById('reenterPassword').value;
 
+            // Check if passwords match
             if (password !== reenterPassword) {
                 alert('Passwords do not match!');
                 return;
             }
 
-            auth.createUserWithEmailAndPassword(firstName + ' '+lastName , password)
-                .then(userCredential => {
-                    const user = userCredential.user;
+            // Data to send to FastAPI backend
+            const userData = {
+                first_name: firstName,
+                last_name: lastName,
+                phone: phoneNumber,
+                dob: dob,
+                age: age,
+                address: address,
+                email: email,
+                password: password,
+                parent_name: parentname  // Change to parent_name
+            };
 
-                    // Add additional user data to Firestore
-                    db.collection('users').doc(user.uid).set({
-                        name:firstName+" "+lastName,
-                        // phoneNumber: phoneNumber,
-                        // dob: dob,
-                        // age: age,
-                        // address: address,
-                        password:reenterPassword
-                    })
-                    .then(() => {
-                        alert('User registered successfully!');
-                    })
-                    .catch(error => {
-                        alert('Error storing user information: ' + error.message);
-                    });
-                })
-                .catch(error => {
-                    alert('Error: ' + error.message);
+            console.log(userData);
+            try {
+                // Making a POST request to the FastAPI signup endpoint
+                const response = await fetch('http://localhost:8000/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(userData) // Sending JSON data
                 });
-        });
 
+                if (response.ok) {
+                    // Parse response data
+                    const data = await response.json();
+                    alert('Sign up successful! User ID: ' + data.user_id);
+                    // Optionally, redirect to login page
+                    window.location.href = 'login.html';
+                } else {
+                    const errorData = await response.json();
+                    alert('Error: ' + (errorData.detail || 'An error occurred during signup.'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error: ' + error.message);
+            }
+        }
+
+        // Function to calculate age from date of birth
         function calculateAge() {
             const dob = document.getElementById('dob').value;
             const dobDate = new Date(dob);
             const today = new Date();
             let age = today.getFullYear() - dobDate.getFullYear();
             const monthDiff = today.getMonth() - dobDate.getMonth();
+
             if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dobDate.getDate())) {
                 age--;
             }

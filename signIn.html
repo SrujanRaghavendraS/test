@@ -5,57 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KiddyPi - Login</title>
     <link rel="stylesheet" href="demo.css">
-    <!-- Firebase SDK as Modules -->
-    <script type="module">
-        // Import the necessary Firebase SDKs
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyDEmRAEN_HjN00T0gpKig0GMPJYZ0N9XEE",
-            authDomain: "smart-ai-71057.firebaseapp.com",
-            projectId: "smart-ai-71057",
-            storageBucket: "smart-ai-71057.appspot.com",
-            messagingSenderId: "560586463239",
-            appId: "1:560586463239:web:dc391be67c45f555ddf2a2",
-            measurementId: "G-6BGDTYE1WJ"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-
+    <script>
         // Login function
-        window.login = function() {
+        window.login = async function() {
             const email = document.getElementById('txtEmail').value;
             const password = document.getElementById('txtPassword').value;
 
-            console.log("Email:", email);
-            console.log("Password:", password);
+            try {
+                const response = await fetch('http://localhost:8000/signin', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email: email, password: password })
+                });
 
-            // Firebase login
-            signInWithEmailAndPassword(auth, email, password)
-                .then(userCredential => {
-                    alert('Logged in successfully!');
+                if (response.ok) {
+                    const data = await response.json();
+                    alert('Logged in successfully! User ID: ' + data.user_id);
                     document.getElementById('txtEmail').value = '';
                     document.getElementById('txtPassword').value = '';
                     // window.location.href = 'homepage.html'; // Uncomment to redirect
-                })
-                .catch(error => {
-                    console.error('Error Code:', error.code); // Log error code
-                    console.error('Error Message:', error.message); // Log error message
-                    alert('Error: ' + error.message);
-                });
+                } else {
+                    const errorData = await response.json();
+                    alert('Error: ' + (errorData.detail || 'An error occurred.'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error: ' + error.message);
+            }
         }
 
-        // Redirect to Signup page
         window.goToSignup = function() {
             window.location.href = 'signup.html'; // Change this to the actual signup page URL
         }
     </script>
 </head>
 <body>
-    <!-- Navbar -->
     <nav class="navbar">
         <div class="navbar-container">
             <div class="logo">
@@ -66,10 +52,9 @@
         </div>
     </nav>
 
-    <!-- Login Form Section -->
     <div class="content">
         <div id="login">
-            <form onsubmit="return false;"> <!-- Prevent default form submission -->
+            <form onsubmit="return false;"> 
                 <div class="group">
                     <input id="txtEmail" type="email" placeholder="Email" required>
                 </div>
