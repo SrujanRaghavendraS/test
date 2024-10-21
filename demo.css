@@ -1,0 +1,186 @@
+/* General styling */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+
+/* Navbar styling */
+.navbar {
+    background-color: #ff5722;
+    padding: 15px 0;
+    position: sticky;
+    top: 0;
+    width: 100%;
+    z-index: 10;
+}
+
+.navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 90%;
+    margin: 0 auto;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo img {
+    height: 40px;
+    margin-right: 10px;
+}
+
+.logo span {
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+    color: #ffc107;
+}
+
+/* Form styling */
+form {
+    width: 40%;
+    margin: 4em auto;
+    padding: 3em 2em 2em 2em;
+    background: #fafafa;
+    border: 1px solid #ebebeb;
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 1px 1px 0px;
+}
+
+/* Styling for login form (two rows) */
+#login form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#login .group {
+    width: 100%;
+    position: relative;
+    margin-bottom: 30px;
+}
+
+/* Styling for signup form (two columns) */
+#signup form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+#signup .group {
+    flex: 1 1 calc(50% - 20px); /* Two columns for signup */
+    position: relative;
+    margin-bottom: 30px;
+}
+
+/* Input styling */
+input, textarea {
+    font-size: 16px;
+    padding: 10px;
+    width: 100%;
+    background: #fafafa;
+    color: #636363;
+    border: none;
+    border-bottom: 1px solid #757575;
+    box-sizing: border-box;
+}
+
+input:focus, textarea:focus {
+    outline: none;
+    border-bottom: 2px solid #4a89dc;
+}
+
+/* Label styling */
+label {
+    color: #999;
+    font-size: 14px;
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    transition: all 0.2s ease;
+}
+
+input:focus ~ label,
+input.used ~ label,
+textarea:focus ~ label,
+textarea.used ~ label {
+    top: -20px;
+    transform: scale(0.75);
+    color: #4a89dc;
+}
+
+/* Age Input styling */
+.age-group {
+    flex: 1 1 calc(50% - 20px);
+    position: relative;
+    margin-bottom: 30px;
+}
+
+input[readonly] {
+    background-color: #e9ecef;
+    border-bottom: 1px solid #ccc;
+}
+
+/* Button styling */
+.button {
+    width: 100%;
+    padding: 10px 0;
+    margin-top: 20px;
+    background-color: #4a89dc;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.button:hover {
+    background-color: #357bd8;
+}
+
+/* Additional styling for textarea */
+textarea {
+    resize: none;
+    height: 80px;
+    padding: 10px;
+    border-bottom: 1px solid #757575;
+}
+
+/* Responsive Adjustments */
+@media screen and (max-width: 768px) {
+    #signup form {
+        flex-direction: column;
+    }
+
+    #signup .group,
+    #login .group {
+        flex: 1 1 100%;
+    }
+}
+.demo-button {
+    background-color: #ffc107;
+    color: #333;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KiddyPi - Sign Up</title>
+    <link rel="stylesheet" href="demo.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="logo">
+                <img src="Images/kiddypi.png" alt="KiddyPi Logo">
+                <span>KiddyPi</span>
+            </div>
+            <a href="login.html" class="demo-button">Login</a> <!-- Link back to login page -->
+        </div>
+    </nav>
+
+    <!-- Signup Form Section -->
+    <div class="content">
+        <div id="signup">
+            <form>
+                <div class="group">
+                    <input id="firstName" type="text" placeholder="First Name" required>
+                </div>
+                <div class="group">
+                    <input id="lastName" type="text" placeholder="Last Name" required>
+                </div>
+                <div class="group">
+                    <input id="phoneNumber" type="tel" pattern="[0-9]{10}" placeholder="Phone number" required>
+                </div>
+                <div class="group">
+                    <input id="dob" type="date" onchange="calculateAge()" required>
+                </div>
+                <div class="group">
+                    <input id="age" type="text" placeholder="Age" readonly>
+                </div>
+                <div class="group">
+                    <textarea id="address" rows="4" placeholder="Address" required></textarea>
+                </div>
+                <div class="group">
+                    <input id="newPassword" type="password" placeholder="New Password" required>
+                </div>
+                <div class="group">
+                    <input id="reenterPassword" type="password" placeholder="Re-enter Password" required>
+                </div>
+                <button id="btnSignup" type="button" class="button buttonBlue">Sign up</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDEmRAEN_HjN00T0gpKig0GMPJYZ0N9XEE",
+            authDomain: "smart-ai-71057.firebaseapp.com",
+            projectId: "smart-ai-71057",
+            storageBucket: "smart-ai-71057.appspot.com",
+            messagingSenderId: "560586463239",
+            appId: "1:560586463239:web:dc391be67c45f555ddf2a2",
+            measurementId: "G-6BGDTYE1WJ"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Signup functionality
+        document.getElementById('btnSignup').addEventListener('click', function() {
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            const dob = document.getElementById('dob').value;
+            const age = document.getElementById('age').value;
+            const address = document.getElementById('address').value;
+            const password = document.getElementById('newPassword').value;
+            const reenterPassword = document.getElementById('reenterPassword').value;
+
+            if (password !== reenterPassword) {
+                alert('Passwords do not match!');
+                return;
+            }
+
+            auth.createUserWithEmailAndPassword(firstName + ' '+lastName , password)
+                .then(userCredential => {
+                    const user = userCredential.user;
+
+                    // Add additional user data to Firestore
+                    db.collection('users').doc(user.uid).set({
+                        name:firstName+" "+lastName,
+                        // phoneNumber: phoneNumber,
+                        // dob: dob,
+                        // age: age,
+                        // address: address,
+                        password:reenterPassword
+                    })
+                    .then(() => {
+                        alert('User registered successfully!');
+                    })
+                    .catch(error => {
+                        alert('Error storing user information: ' + error.message);
+                    });
+                })
+                .catch(error => {
+                    alert('Error: ' + error.message);
+                });
+        });
+
+        function calculateAge() {
+            const dob = document.getElementById('dob').value;
+            const dobDate = new Date(dob);
+            const today = new Date();
+            let age = today.getFullYear() - dobDate.getFullYear();
+            const monthDiff = today.getMonth() - dobDate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dobDate.getDate())) {
+                age--;
+            }
+            document.getElementById('age').value = age;
+        }
+    </script>
+</body>
+</html>

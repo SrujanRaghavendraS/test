@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KiddyPi - Login</title>
+    <link rel="stylesheet" href="demo.css">
+    <!-- Firebase SDK as Modules -->
+    <script type="module">
+        // Import the necessary Firebase SDKs
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDEmRAEN_HjN00T0gpKig0GMPJYZ0N9XEE",
+            authDomain: "smart-ai-71057.firebaseapp.com",
+            projectId: "smart-ai-71057",
+            storageBucket: "smart-ai-71057.appspot.com",
+            messagingSenderId: "560586463239",
+            appId: "1:560586463239:web:dc391be67c45f555ddf2a2",
+            measurementId: "G-6BGDTYE1WJ"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Login function
+        window.login = function() {
+            const email = document.getElementById('txtEmail').value;
+            const password = document.getElementById('txtPassword').value;
+
+            console.log("Email:", email);
+            console.log("Password:", password);
+
+            // Firebase login
+            signInWithEmailAndPassword(auth, email, password)
+                .then(userCredential => {
+                    alert('Logged in successfully!');
+                    document.getElementById('txtEmail').value = '';
+                    document.getElementById('txtPassword').value = '';
+                    // window.location.href = 'homepage.html'; // Uncomment to redirect
+                })
+                .catch(error => {
+                    console.error('Error Code:', error.code); // Log error code
+                    console.error('Error Message:', error.message); // Log error message
+                    alert('Error: ' + error.message);
+                });
+        }
+
+        // Redirect to Signup page
+        window.goToSignup = function() {
+            window.location.href = 'signup.html'; // Change this to the actual signup page URL
+        }
+    </script>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="logo">
+                <img src="Images/kiddypi.png" alt="KiddyPi Logo">
+                <span>KiddyPi</span>
+            </div>
+            <a href="#" class="demo-button">Get Started</a>
+        </div>
+    </nav>
+
+    <!-- Login Form Section -->
+    <div class="content">
+        <div id="login">
+            <form onsubmit="return false;"> <!-- Prevent default form submission -->
+                <div class="group">
+                    <input id="txtEmail" type="email" placeholder="Email" required>
+                </div>
+                <div class="group">
+                    <input id="txtPassword" type="password" placeholder="Password" required>
+                </div>
+                <button type="button" class="button buttonBlue" onclick="login()">Log in</button>
+                <button type="button" class="button buttonGreen" onclick="goToSignup()">Sign Up</button> <!-- Signup button -->
+            </form>
+        </div>
+    </div>
+</body>
+</html>
